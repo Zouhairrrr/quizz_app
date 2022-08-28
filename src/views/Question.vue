@@ -11,7 +11,7 @@
       <div class="header">
         <span>
           Time:
-          {{ count }} s
+          {{ timerCouner }} s
         </span>
         <span> Question :{{ get_index + 1 }}/5</span>
       </div>
@@ -65,7 +65,9 @@ export default {
   },
   data: function () {
     return {
-      timerCouner: Store.get_time
+
+    // hadi hiya limakhedamach
+      timerCouner: this.$store.getters.get_time
     };
   },
   mounted() {
@@ -87,26 +89,26 @@ export default {
       this.$store.state.index--;
     },
 
-    // countDown() {
-    //   if (this.timerCouner && this.timerCouner > 0)
-    //     setTimeout(() => {
-    //       this.timerCouner-=1;
-    //       this.countDown();
-    //     }, 1000);
-    // },
-  },
-  watch: {
-    timerCouner: {
-      handler(value) {
-        if (value > 0) {
-          setTimeout(() => {
-            return (this.timerCouner -= 1);
-          }, 1000);
-        }
-        clearTimeout();
-      },
-      immediate: true, // This ensures the watcher is triggered upon creation
+    countDown() {
+      if (this.timerCouner > 0)
+        setTimeout(() => {
+          this.timerCouner-=1;
+          this.countDown();
+        }, 1000);
     },
+  },
+  // watch: {
+  //   timerCouner: {
+  //     handler(value) {
+  //       if (value > 0) {
+  //         setTimeout(() => {
+  //           return (this.timerCouner -= 1);
+  //         }, 1000);
+  //       }
+  //       clearTimeout();
+  //     },
+  //     immediate: true, // This ensures the watcher is triggered upon creation
+  //   },
   },
 };
 </script>
