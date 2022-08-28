@@ -1,14 +1,17 @@
 <template>
   <div class="container">
     <!-- ll -->
-  
+    <!-- <div class="model">
+      <button class="btn btn-next">start Test</button>
+    </div> -->
     <div v-if="all_questions[get_index]" class="content">
       <div class="image">
         <img :src="all_questions[get_index].image" alt="" />
       </div>
       <div class="header">
-        <span :v-on="countDownTimer">
-          Time: {{ timerCount ? timerCount : "0" }} s
+        <span>
+          Time:
+          {{ count }} s
         </span>
         <span> Question :{{ get_index + 1 }}/5</span>
       </div>
@@ -46,15 +49,23 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-
+import { mapGetters, Store } from "vuex";
+// import { ref } from "vue";
 export default {
   name: "Question",
-  computed: mapGetters(["all_questions", "get_index", "get_time"]),
-
-  data() {
+  computed: {
+    ...mapGetters([
+      "all_questions",
+      "get_index",
+      "get_time",
+      "get_answers",
+      "get_right_answers",
+      // ...
+    ]),
+  },
+  data: function () {
     return {
-      timerCount: this.$store.getters.get_time,
+      timerCouner: Store.get_time
     };
   },
   mounted() {
@@ -63,6 +74,9 @@ export default {
   methods: {
     submit(e) {
       console.log(e.target.value);
+      const answer_ = e.target.value;
+      // console.log(this.$store.getters.get_index);
+      const right_answers = [];
     },
     next(e) {
       e.preventDefault();
@@ -72,17 +86,27 @@ export default {
       e.preventDefault();
       this.$store.state.index--;
     },
-    countDownTimer() {
-      if (this.timerCount > 0) {
-        setTimeout(() => {
-          this.timerCount--;
-          this.countDownTimer();
-        }, 1000);
-      }
-    },
+
+    // countDown() {
+    //   if (this.timerCouner && this.timerCouner > 0)
+    //     setTimeout(() => {
+    //       this.timerCouner-=1;
+    //       this.countDown();
+    //     }, 1000);
+    // },
   },
-  created() {
-    this.countDownTimer();
+  watch: {
+    timerCouner: {
+      handler(value) {
+        if (value > 0) {
+          setTimeout(() => {
+            return (this.timerCouner -= 1);
+          }, 1000);
+        }
+        clearTimeout();
+      },
+      immediate: true, // This ensures the watcher is triggered upon creation
+    },
   },
 };
 </script>

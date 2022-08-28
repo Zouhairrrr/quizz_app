@@ -4,9 +4,12 @@ import Vuex from "vuex";
 //to handle state
 const state = {
   questions: [],
+  answers: [],
+  right_answers: [],
   score: 0,
   index: 0,
-  time: 0,
+  time: [],
+  timer: 0,
 };
 
 //to handle state
@@ -18,7 +21,13 @@ const getters = {
     return state.index;
   },
   get_time(state) {
-    return state.time;
+    return state.time[state.index];
+  },
+  get_right_answers(state) {
+    return state.right_answers;
+  },
+  get_answers(state) {
+    return state.answers;
   },
 };
 
@@ -28,13 +37,30 @@ const actions = {
     axios
       .get("http://localhost:8080/api/quizzes")
       .then((res) => {
+        //* all qustions
         commit("set_data", res.data.questions);
-        commit("get_question_time", res.data.questions);
+
+        //* questions answers
+        const answers = res.data.questions.map((el) => el.answers);
+        commit("set_answers", answers);
+
+        //* questions time
+        const time = res.data.questions.filter((el) => el.time);
+        
+        commit("set_time", time);
+
+        //* correct answers only ,
+        const right_ansswr = res.data.questions.map((el) =>
+          el.answers.filter((el) => el.correct)
+        );
+        commit("set_right_answers", right_ansswr);
       })
       .catch((error) => {
         console.log(error.message);
       });
   },
+
+
 };
 
 //to handle mutations
@@ -44,17 +70,15 @@ const mutations = {
   set_data(state, questions) {
     state.questions = questions;
   },
-  get_question_time(state, time) {
+  set_answers(state, answers) {
+    state.answers = answers;
+  },
+  set_right_answers(state, right_answers) {
+    state.right_answers = right_answers;
+  },
+  set_time(state, time) {
     const real_time = time.map((el) => el.time);
     state.time = real_time;
-  },
-  set_timer() {
-    console.log(time);
-    if (val > 0) {
-      setTimeout(() => {
-        return (val -= 1);
-      }, 1000);
-    }
   },
 };
 

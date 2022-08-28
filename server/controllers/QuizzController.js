@@ -22,8 +22,27 @@ const QuizzController = {
     }
   },
 
-
-
+  try_aggregate: async (req, res) => {
+    try {
+      const data = req.body;
+      const item = data.map((el) => el.answers.filter((el) => el.correct));
+      // console.log(item);
+      // const filter = { answers: { $in: data.answers } };
+      const quizz = Quizz.aggregate([{ $matach: item }]);
+      if (!quizz) {
+        return res.status(404).json({
+          success: false,
+          message: "No quizz found",
+        });
+      }
+      return res.status(301).json({
+        success: true,
+        data: quizz,
+      });
+    } catch (error) {
+      console.log("blablobli: ", error.message);
+    }
+  },
 
   //* get one quizz by id
   getQuizz: async (req, res) => {

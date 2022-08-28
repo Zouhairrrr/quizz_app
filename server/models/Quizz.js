@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-
+// agrregate , find ????
+// 
 const QuizzScema = mongoose.Schema({
   image: {
     type: String,
